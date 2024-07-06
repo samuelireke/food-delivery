@@ -6,7 +6,7 @@ import FoodDisplay from "../../components/FoodDisplay/FoodDisplay";
 // import FoodRating from "../../components/FoodRating/FoodRating";
 
 const Home = () => {
-  const [category, setCategory] = useState("All");
+  const [category, setCategory] = useState("all");
 
   return (
     <div>
