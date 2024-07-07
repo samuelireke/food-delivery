@@ -8,7 +8,9 @@ const Navbar = ({ setShowLogin }) => {
   const [menu, setMenu] = useState("home");
   return (
     <div className="navbar">
-      <img src={assets.logo} alt="logo" className="logo" />
+      <Link to="/" onClick={() => setMenu("home")}>
+        <img src={assets.logo} alt="logo" className="logo" />
+      </Link>
       <ul className="navbar-menu">
         <Link
           to="/"
@@ -46,7 +48,9 @@ const Navbar = ({ setShowLogin }) => {
           alt="search-logo"
         />
         <div className="navbar-basket-icon">
-          <img src={assets.basket_icon} alt="" />
+          <Link to="/cart">
+            <img src={assets.basket_icon} alt="" />
+          </Link>
           <div className="dot"></div>
         </div>
         <button
