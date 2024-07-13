@@ -54,10 +54,12 @@ const PlaceOrder = () => {
         const { session_url } = response.data;
         window.location.replace(session_url);
       } else {
+        toast.dismiss();
         toast.error("Failed to place order");
       }
     } catch (error) {
       console.error("Failed to proceed to payment: ", error);
+      toast.dismiss();
       toast.error("Failed to place order");
     }
   };

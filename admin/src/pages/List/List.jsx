@@ -11,10 +11,12 @@ const List = ({ api_url }) => {
       if (response.data.success) {
         setList(response.data.data);
       } else {
+        toast.dismiss();
         toast.error("Error getting food list");
       }
     } catch (error) {
       console.error("Error fetting food list", error);
+      toast.dismiss();
       toast.error(error.response.data.message);
     }
   };
@@ -28,10 +30,12 @@ const List = ({ api_url }) => {
         await fetchList();
         toast.success(response.data.message);
       } else {
+        toast.dismiss();
         toast.error("Error removing food");
       }
     } catch (error) {
       console.error("Error removing item", error);
+      toast.dismiss();
       toast.error(error.response.data.message);
     }
   };

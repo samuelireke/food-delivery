@@ -20,7 +20,7 @@ const placeOrder = async (req, res) => {
 
     // create stripe payment link
     const line_items = items.map((item) => ({
-      price: {
+      price_data: {
         currency: "gbp",
         product_data: {
           name: item.name,
@@ -32,7 +32,7 @@ const placeOrder = async (req, res) => {
     }));
 
     line_items.push({
-      price: {
+      price_data: {
         currency: "gbp",
         product_data: {
           name: "Delivery Charges",
@@ -59,4 +59,23 @@ const placeOrder = async (req, res) => {
   }
 };
 
-export { placeOrder };
+const verifyOrder = async (req, res) => {
+  const { orderId, success } = req.body;
+
+  try {
+    if (success === "true") {
+      await orderModel.findByIdAndUpdate(orderId, { payment: true });
+      res.json({ success: true, message: "Payment successful" });
+    } else {
+      await orderModel.findByIdAndDelete(orderId, { payment: false });
+      res.json({ success: false, message: "Payment failed" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error occured while verifying order",
+    });
+  }
+};
+export { placeOrder, verifyOrder };

@@ -37,10 +37,12 @@ const LoginPopup = ({ setShowLogin }) => {
         localStorage.setItem("token", response.data.token);
         setShowLogin(false);
       } else {
+        toast.dismiss();
         toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Error logging in:", error);
+      toast.dismiss();
       toast.error(error.response.data.message);
     }
   };

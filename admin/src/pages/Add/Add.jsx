@@ -40,10 +40,12 @@ const Add = ({ api_url }) => {
         setImage(false);
         toast.success(response.data.message);
       } else {
+        toast.dismiss();
         toast.error(response.data.message);
       }
     } catch (error) {
       console.error("Error adding item", error);
+      toast.dismiss();
       toast.error(error.response.data.message);
     }
   };

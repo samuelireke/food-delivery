@@ -1,5 +1,6 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const api_url = import.meta.env.VITE_API_URL;
 
@@ -9,6 +10,11 @@ const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [token, setToken] = useState("");
   const [food_list, setFoodList] = useState([]);
+  const [sessionStatus, setSessionStatus] = useState({
+    isExpired: false,
+    message: "",
+  });
+  const navigate = useNavigate();
 
   const addToCart = async (itemId) => {
     if (!cartItems[itemId]) {
@@ -17,11 +23,27 @@ const StoreContextProvider = (props) => {
       setCartItems({ ...cartItems, [itemId]: cartItems[itemId] + 1 });
     }
     if (token) {
-      await axios.post(
-        api_url + "/api/cart/add",
-        { itemId },
-        { headers: { token } }
-      );
+      try {
+        await axios.post(
+          api_url + "/api/cart/add",
+          { itemId },
+          { headers: { token } }
+        );
+      } catch (error) {
+        let error_name = error.response.data.error_name;
+        let error_message = error.response.data.message;
+        // check if session is expired
+        if (!sessionStatus.isExpired & (error_name === "TokenExpiredError")) {
+          setSessionStatus((data) => ({
+            ...data,
+            isExpired: true,
+            message: error_message,
+          }));
+          console.log("session expired!");
+          return;
+        }
+        console.error("Failed to add item to cart:", error);
+      }
     }
   };
 
@@ -78,6 +100,16 @@ const StoreContextProvider = (props) => {
 
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (sessionStatus.isExpired) {
+      setCartItems({});
+      setSessionStatus({ isExpired: false, message: "" });
+      navigate("/"); // Navigate to the home page upon session expiry
+      localStorage.removeItem("token");
+    }
+  }, [sessionStatus.isExpired]);
+
   const contextValue = {
     food_list,
     setFoodList,
@@ -89,6 +121,7 @@ const StoreContextProvider = (props) => {
     api_url,
     token,
     setToken,
+    sessionStatus,
   };
 
   return (
