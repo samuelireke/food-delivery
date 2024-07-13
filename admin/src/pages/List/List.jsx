@@ -6,23 +6,33 @@ const List = ({ api_url }) => {
   const [list, setList] = useState([]);
 
   const fetchList = async () => {
-    const response = await axios.get(`${api_url}/api/food/all`);
-    if (response.data.success) {
-      setList(response.data.data);
-    } else {
-      toast.error("Error getting food list");
+    try {
+      const response = await axios.get(`${api_url}/api/food/all`);
+      if (response.data.success) {
+        setList(response.data.data);
+      } else {
+        toast.error("Error getting food list");
+      }
+    } catch (error) {
+      console.error("Error fetting food list", error);
+      toast.error(error.response.data.message);
     }
   };
 
   const removeFood = async (foodId) => {
-    const response = await axios.post(`${api_url}/api/food/remove`, {
-      id: foodId,
-    });
-    if (response.data.success) {
-      await fetchList();
-      toast.success(response.data.message);
-    } else {
-      toast.error("Error removing food");
+    try {
+      const response = await axios.post(`${api_url}/api/food/remove`, {
+        id: foodId,
+      });
+      if (response.data.success) {
+        await fetchList();
+        toast.success(response.data.message);
+      } else {
+        toast.error("Error removing food");
+      }
+    } catch (error) {
+      console.error("Error removing item", error);
+      toast.error(error.response.data.message);
     }
   };
 

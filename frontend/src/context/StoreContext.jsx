@@ -1,10 +1,13 @@
 import { createContext, useEffect, useState } from "react";
 import { food_list } from "../assets/assets";
 
+const api_url = import.meta.env.VITE_API_URL;
+
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
+  const [token, setToken] = useState("");
 
   const addToCart = (itemId) => {
     if (!cartItems[itemId]) {
@@ -34,6 +37,11 @@ const StoreContextProvider = (props) => {
     return totalAmount;
   };
 
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
   const contextValue = {
     food_list,
     cartItems,
@@ -41,6 +49,9 @@ const StoreContextProvider = (props) => {
     addToCart,
     removeFromCart,
     getTotalCartAmount,
+    api_url,
+    token,
+    setToken,
   };
 
   return (

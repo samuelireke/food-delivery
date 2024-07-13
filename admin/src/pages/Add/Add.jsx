@@ -27,19 +27,24 @@ const Add = ({ api_url }) => {
     formData.append("category", data.category);
     formData.append("price", Number(data.price));
     formData.append("image", image);
-    // send data to server
-    const response = await axios.post(`${api_url}/api/food/add`, formData);
-    if (response.data.success) {
-      setData({
-        name: "",
-        description: "",
-        price: "",
-        category: "Salad",
-      });
-      setImage(false);
-      toast.success(response.data.message);
-    } else {
-      toast.error(response.data.message);
+    try {
+      // send data to server
+      const response = await axios.post(`${api_url}/api/food/add`, formData);
+      if (response.data.success) {
+        setData({
+          name: "",
+          description: "",
+          price: "",
+          category: "Salad",
+        });
+        setImage(false);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error adding item", error);
+      toast.error(error.response.data.message);
     }
   };
 
