@@ -24,7 +24,7 @@ foodRouter.post("/add", upload.single("image"), addFood);
 
 foodRouter.get("/all", getAllFood);
 
-foodRouter.delete("/remove", removeFood);
+foodRouter.post("/remove", removeFood);
 
 foodRouter.delete("/remove/all", removeAllFood);
 
