@@ -78,4 +78,19 @@ const verifyOrder = async (req, res) => {
     });
   }
 };
-export { placeOrder, verifyOrder };
+
+// user orders to be displayed in fronted
+const fetchUserOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({ userId: req.body.userId });
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error occured while fetching user orders",
+    });
+  }
+};
+
+export { placeOrder, verifyOrder, fetchUserOrders };

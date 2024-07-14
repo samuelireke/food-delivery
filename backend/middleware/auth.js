@@ -3,11 +3,13 @@ import jwt from "jsonwebtoken";
 
 const authMiddleware = async (req, res, next) => {
   const { token } = req.headers;
+  console.log("my token", token);
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Access denied! Please login." });
+    return res.status(401).json({
+      success: false,
+      message: "Access denied! No valid token. Please login.",
+    });
   }
   try {
     const token_decode = jwt.verify(token, process.env.JWT_SECRET);

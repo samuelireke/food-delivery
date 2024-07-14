@@ -33,7 +33,10 @@ const StoreContextProvider = (props) => {
         let error_name = error.response.data.error_name;
         let error_message = error.response.data.message;
         // check if session is expired
-        if (!sessionStatus.isExpired & (error_name === "TokenExpiredError")) {
+        if (
+          sessionStatus.isExpired === false &&
+          error_name === "TokenExpiredError"
+        ) {
           setSessionStatus((data) => ({
             ...data,
             isExpired: true,
@@ -75,16 +78,67 @@ const StoreContextProvider = (props) => {
   };
 
   const fetchFoodList = async () => {
-    const response = await axios.get(api_url + "/api/food/all");
-    setFoodList(response.data.data);
+    try {
+      const response = await axios.get(api_url + "/api/food/all", {
+        headers: { token },
+      });
+      setFoodList(response.data.data);
+    } catch (error) {
+      let error_name = error.response.data.error_name;
+      let error_message = error.response.data.message;
+      // check if session is expired
+      if (
+        sessionStatus.isExpired === false &&
+        error_name === "TokenExpiredError"
+      ) {
+        setSessionStatus((data) => ({
+          ...data,
+          isExpired: true,
+          message: error_message,
+        }));
+        console.log("session expired!");
+        return;
+      }
+      console.error("Failed to fetch food list:", error);
+    }
   };
 
   const loadCart = async (token) => {
-    const reponse = await axios.get(api_url + "/api/cart/get", {
-      headers: { token: token },
-    });
-    if (reponse.data.success) {
-      setCartItems(reponse.data.cart);
+    try {
+      const reponse = await axios.get(api_url + "/api/cart/get", {
+        headers: { token },
+      });
+      if (reponse.data.success) {
+        setCartItems(reponse.data.cart);
+      }
+    } catch (error) {
+      let error_name = error.response.data.error_name;
+      let error_message = error.response.data.message;
+      // check if session is expired
+      if (
+        sessionStatus.isExpired === false &&
+        error_name === "TokenExpiredError"
+      ) {
+        setSessionStatus((data) => ({
+          ...data,
+          isExpired: true,
+          message: error_message,
+        }));
+        console.log("session expired!");
+        return;
+      }
+      console.error("Failed to load cart:", error);
+    }
+  };
+
+  const handleSessionExpiration = () => {
+    console.log("isSession expired?: " + sessionStatus.isExpired);
+    if (sessionStatus.isExpired) {
+      setToken("");
+      setCartItems({});
+      setSessionStatus({ isExpired: false, message: "" });
+      navigate("/"); // Navigate to the home page upon session expiry
+      localStorage.removeItem("token");
     }
   };
 
@@ -93,8 +147,12 @@ const StoreContextProvider = (props) => {
       await fetchFoodList();
       const userToken = localStorage.getItem("token");
       if (userToken) {
-        setToken(userToken);
-        await loadCart(userToken);
+        if (sessionStatus.isExpired) {
+          handleSessionExpiration();
+        } else {
+          setToken(userToken);
+          await loadCart(userToken);
+        }
       }
     };
 
@@ -103,10 +161,8 @@ const StoreContextProvider = (props) => {
 
   useEffect(() => {
     if (sessionStatus.isExpired) {
-      setCartItems({});
-      setSessionStatus({ isExpired: false, message: "" });
-      navigate("/"); // Navigate to the home page upon session expiry
-      localStorage.removeItem("token");
+      handleSessionExpiration();
+      console.log("Session");
     }
   }, [sessionStatus.isExpired]);
 

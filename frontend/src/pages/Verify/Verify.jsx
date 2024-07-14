@@ -3,12 +3,13 @@ import "./Verify.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { StoreContext } from "../../context/StoreContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Verify = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const success = searchParams.get("success");
   const orderId = searchParams.get("orderId");
-  const { api_url } = useContext(StoreContext);
+  const { api_url, sessionStatus } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const verifyPayment = async () => {
@@ -37,6 +38,14 @@ const Verify = () => {
 
     checkPayment();
   }, []);
+
+  useEffect(() => {
+    if (sessionStatus.isExpired) {
+      // Dismiss all toasts before showing a new one
+      toast.dismiss();
+      toast.error(sessionStatus.message);
+    }
+  }, [sessionStatus]);
 
   return (
     <div className="verify">

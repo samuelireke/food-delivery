@@ -5,8 +5,14 @@ import { toast } from "react-toastify";
 import axios from "axios";
 
 const PlaceOrder = () => {
-  const { getTotalCartAmount, token, food_list, cartItems, api_url } =
-    useContext(StoreContext);
+  const {
+    getTotalCartAmount,
+    token,
+    food_list,
+    cartItems,
+    api_url,
+    sessionStatus,
+  } = useContext(StoreContext);
 
   const [data, setData] = useState({
     firstName: "",
@@ -63,6 +69,14 @@ const PlaceOrder = () => {
       toast.error("Failed to place order");
     }
   };
+
+  useEffect(() => {
+    if (sessionStatus.isExpired) {
+      // Dismiss all toasts before showing a new one
+      toast.dismiss();
+      toast.error(sessionStatus.message);
+    }
+  }, [sessionStatus]);
 
   return (
     <form onSubmit={placeOrder} className="place-order">

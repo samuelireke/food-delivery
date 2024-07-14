@@ -2,12 +2,27 @@ import React, { useContext } from "react";
 import "./Cart.css";
 import { StoreContext } from "../../context/StoreContext";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Cart = () => {
-  const { cartItems, food_list, removeFromCart, getTotalCartAmount, api_url } =
-    useContext(StoreContext);
+  const {
+    cartItems,
+    food_list,
+    removeFromCart,
+    getTotalCartAmount,
+    api_url,
+    sessionStatus,
+  } = useContext(StoreContext);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (sessionStatus.isExpired) {
+      // Dismiss all toasts before showing a new one
+      toast.dismiss();
+      toast.error(sessionStatus.message);
+    }
+  }, [sessionStatus]);
   return (
     <div className="cart">
       <div className="cart-items">
