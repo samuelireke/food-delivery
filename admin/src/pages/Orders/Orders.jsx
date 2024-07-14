@@ -65,9 +65,9 @@ const Orders = ({ api_url }) => {
                 <p>
                   {order.address.city +
                     ", " +
-                    order.address.state +
+                    order.address.county +
                     ", " +
-                    order.address.zipCode +
+                    order.address.postCode +
                     ", " +
                     order.address.country}
                 </p>

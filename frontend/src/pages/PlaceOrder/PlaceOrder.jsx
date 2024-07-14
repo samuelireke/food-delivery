@@ -21,8 +21,8 @@ const PlaceOrder = () => {
     email: "",
     street: "",
     city: "",
-    state: "",
-    zipCode: "",
+    county: "",
+    postCode: "",
     country: "",
     mobilePhoneNumber: "",
   });
@@ -136,21 +136,21 @@ const PlaceOrder = () => {
             required
           />
           <input
-            name="state"
+            name="county"
             onChange={onChangeHandler}
-            value={data.state}
+            value={data.county}
             type="text"
-            placeholder="State"
+            placeholder="County"
             required
           />
         </div>
         <div className="multi-fields">
           <input
-            name="zipCode"
+            name="postCode"
             onChange={onChangeHandler}
-            value={data.zipCode}
+            value={data.postCode}
             type="text"
-            placeholder="Zip code"
+            placeholder="Post code"
             required
           />
           <input
