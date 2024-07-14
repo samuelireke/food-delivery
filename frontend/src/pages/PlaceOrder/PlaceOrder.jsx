@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./PlaceOrder.css";
 import { StoreContext } from "../../context/StoreContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
   const {
@@ -70,13 +71,22 @@ const PlaceOrder = () => {
     }
   };
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (sessionStatus.isExpired) {
       // Dismiss all toasts before showing a new one
       toast.dismiss();
       toast.error(sessionStatus.message);
     }
-  }, [sessionStatus]);
+    if (!token) {
+      navigate("/cart");
+      toast.dismiss();
+      toast.error("Login to proceed to checkout");
+    } else if (getTotalCartAmount() === 0) {
+      navigate("/cart");
+    }
+  }, [token, sessionStatus]);
 
   return (
     <form onSubmit={placeOrder} className="place-order">

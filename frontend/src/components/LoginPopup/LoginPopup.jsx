@@ -14,6 +14,17 @@ const LoginPopup = ({ setShowLogin }) => {
     email: "",
     password: "",
   });
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleCheckboxChange();
+    }
+  };
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
@@ -90,11 +101,20 @@ const LoginPopup = ({ setShowLogin }) => {
           {currState === "Sign Up" ? "Create account" : "Login"}
         </button>
         <div className="login-popup-condition">
-          <input type="checkbox" required />
-          <p>
-            By continuing I agree to the <a href="#">Terms of Use</a>. Read our{" "}
-            <a href="#">Privacy Policy</a>
-          </p>
+          <label htmlFor="terms-checkbox">
+            <input
+              id="terms-checkbox"
+              type="checkbox"
+              checked={isChecked}
+              onChange={handleCheckboxChange}
+              onKeyPress={handleKeyPress}
+              required
+            />
+            <p>
+              By continuing I agree to the <a href="#">Terms of Use</a>. Read
+              our <a href="#">Privacy Policy</a>
+            </p>
+          </label>
         </div>
         {currState === "Login" ? (
           <p>

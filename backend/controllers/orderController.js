@@ -93,4 +93,33 @@ const fetchUserOrders = async (req, res) => {
   }
 };
 
-export { placeOrder, verifyOrder, fetchUserOrders };
+// Listing orders for Admin panel
+const listOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find();
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error occured while listing orders",
+    });
+  }
+};
+
+// updating order status
+const updateStatus = async (req, res) => {
+  try {
+    const { orderId, status } = req.body;
+    await orderModel.findByIdAndUpdate(orderId, { status });
+    res.status(200).json({ success: true, message: "Order status updated" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Error occured while updating order status",
+    });
+  }
+};
+
+export { placeOrder, verifyOrder, fetchUserOrders, listOrders, updateStatus };
